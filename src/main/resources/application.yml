@@ -1,0 +1,67 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /shops-api/
+    session:
+      persistent: true
+
+spring:
+  cloud:
+    config:
+      enabled: false
+  application:
+    name: 'shops'
+  security:
+    oauth2:
+      resource-server:
+        jwt:
+          issuer-uri: 'http://localhost:8080'
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: root
+    url: jdbc:mysql://localhost:3306/shops?createDatabaseIfNotExist=true
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+    show-sql: false
+  codec:
+    max-in-memory-size: 200MB
+
+logging:
+  group:
+    myCustomGroup: com.xvlkk.sp
+  level:
+    root: "WARN"
+    org.springframework.web: "INFO"
+    org.hibernate: "ERROR"
+    myCustomGroup: "TRACE"
+
+management:
+  endpoint:
+    restart:
+      access: none
+    shutdown:
+      access: none
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  metrics:
+    enable:
+      jvm: true
+      root: true
+
+app:
+  application:
+    security:
+      origin-allowed: http://localhost:4200
+      jwt:
+        expiration: 36000000  # 10 hours in milliseconds
+        secret-key: AvsyObIo3IEegVN95g8friq3w8dO4sce
+      request-matchers: security-user/login*,security-user/login/*
