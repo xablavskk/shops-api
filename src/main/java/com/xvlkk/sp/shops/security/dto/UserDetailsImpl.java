@@ -42,7 +42,7 @@ public class UserDetailsImpl implements UserDetails {
             roleNames.forEach(role -> authorities.add(new SimpleGrantedAuthority("ROLE_" + role)));
         });
 
-        return UserMapper.INSTNACE.map(user);
+        return UserMapper.INSTANCE.mapDetails(user);
     }
 
     @Override

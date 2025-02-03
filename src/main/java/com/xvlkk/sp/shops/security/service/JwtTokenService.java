@@ -1,6 +1,10 @@
 package com.xvlkk.sp.shops.security.service;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
 import com.xvlkk.sp.shops.security.config.JwtConfig;
+import com.xvlkk.sp.shops.security.dto.UserDetailsImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -14,6 +18,8 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.function.Function;
 
@@ -21,10 +27,31 @@ import java.util.function.Function;
 public class JwtTokenService {
     private final JwtDecoder jwtDecoder;
 
-    private JwtConfig jwtConfig;
+    private final JwtConfig jwtConfig;
 
-    public JwtTokenService(@Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}") String issuerUri) {
+    public JwtTokenService(@Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}") String issuerUri, JwtConfig jwtConfig) {
         this.jwtDecoder = NimbusJwtDecoder.withJwkSetUri(issuerUri + "/.well-known/jwks.json").build();
+        this.jwtConfig = jwtConfig;
+    }
+
+    /**
+     * generate a JWT token.
+     *
+     * @return Jwt string.
+     */
+    public String generateToken(UserDetailsImpl user) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(jwtConfig.getSecretKey());
+
+            return JWT.create()
+                    .withIssuer(jwtConfig.getIssuerApplication())
+                    .withIssuedAt(creationDate())
+                    .withExpiresAt(expirationDate())
+                    .withSubject(user.getUsername())
+                    .sign(algorithm);
+        } catch (JWTCreationException exception) {
+            throw new RuntimeException("Error in token generate!", exception);
+        }
     }
 
     /**
@@ -80,5 +107,13 @@ public class JwtTokenService {
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
+    }
+
+    private Date creationDate() {
+        return Date.from(ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).toInstant());
+    }
+
+    private Date expirationDate() {
+        return Date.from(ZonedDateTime.now(ZoneId.of("America/Recife")).plusHours(4).toInstant());
     }
 }
