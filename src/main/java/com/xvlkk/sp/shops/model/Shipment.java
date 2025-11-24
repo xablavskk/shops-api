@@ -14,7 +14,8 @@ public class Shipment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "cd_shipment")
+    private Long cdShipment;
 
     @Column(name = "ds_carrier")
     private String dsCarrier;
