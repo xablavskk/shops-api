@@ -20,7 +20,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: root
-    url: jdbc:mysql://localhost:3306/shops?createDatabaseIfNotExist=true
+    url: jdbc:mysql://localhost:3306/shops?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
   jpa:
     generate-ddl: true
     hibernate:
