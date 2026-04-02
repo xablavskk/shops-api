@@ -30,6 +30,18 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.MySQLDialect
     show-sql: false
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin
+    password: admin
+    listener:
+      simple:
+        retry:
+          enabled: true
+          initial-interval: 1000
+          max-attempts: 3
+          multiplier: 2.0
   codec:
     max-in-memory-size: 200MB
 
@@ -65,4 +77,4 @@ app:
         expiration: 36000000  # 10 hours in milliseconds
         secret-key: AvsyObIo3IEegVN95g8friq3w8dO4sce
         issuer-application: shopps-api
-      request-matchers: user/v1/authenticate/*
+      request-matchers: user/v1/authenticate/*,product/v1/**,category/v1/**
